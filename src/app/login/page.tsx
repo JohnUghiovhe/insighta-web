@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { readSessionFromCookies } from "@/lib/backend";
+import { getApiBaseUrl, readSessionFromCookies } from "@/lib/backend";
 
 const CLI_REPO_URL = process.env.NEXT_PUBLIC_CLI_REPO_URL ?? "https://github.com/JohnUghiovhe/Insighta-CLI";
+const githubLoginUrl = `${getApiBaseUrl()}/auth/github`;
 
 export default async function LoginPage() {
   const session = await readSessionFromCookies();
@@ -17,14 +18,14 @@ export default async function LoginPage() {
           <div className="hero-grid hero-grid-login">
             <div className="hero-copy">
               <span className="pill">Insighta Labs+</span>
-              <h1>Profile intelligence for teams that need answers fast.</h1>
+              <h1>Authenticate with GitHub, then open your Insighta workspace.</h1>
               <p>
-                Use the web portal for guided exploration, or jump into the CLI for direct workflows. Both experiences
-                run on the same backend and security model.
+                This portal sends you straight to GitHub for consent, then returns you here with secure httpOnly
+                cookies. The dashboard, profiles, search, and account pages all use the same backend as the CLI.
               </p>
 
               <div className="hero-actions">
-                <Link className="button" href="/api/auth/login">
+                <Link className="button" href={githubLoginUrl}>
                   <span aria-hidden="true" className="button-icon">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -33,7 +34,7 @@ export default async function LoginPage() {
                       />
                     </svg>
                   </span>
-                  Sign in with GitHub
+                  Continue with GitHub
                 </Link>
                 <Link className="button button-ghost" href={CLI_REPO_URL} rel="noreferrer noopener" target="_blank">
                   <span aria-hidden="true" className="button-icon">
@@ -43,23 +44,24 @@ export default async function LoginPage() {
                       <path d="M13.5 15.2H17" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
                     </svg>
                   </span>
-                  Use CLI 
+                  Use CLI
                 </Link>
               </div>
             </div>
 
             <div className="hero-panel">
               <div className="metric-card accent-cyan">
-                <p className="metric-label">Session handling</p>
-                <strong className="metric-value">httpOnly</strong>
-                <p className="metric-note">Access and refresh tokens stay out of browser JavaScript.</p>
+                <p className="metric-label">OAuth handoff</p>
+                <strong className="metric-value">GitHub</strong>
+                <p className="metric-note">The browser goes to GitHub first, then returns with a backend-issued session.</p>
               </div>
               <div className="metric-card accent-lime">
-                <p className="metric-label">Auth flow</p>
-                <strong className="metric-value">GitHub OAuth</strong>
-                <p className="metric-note">Backend completes callback and refresh before protected pages render.</p>
+                <p className="metric-label">Session storage</p>
+                <strong className="metric-value">httpOnly</strong>
+                <p className="metric-note">Tokens stay out of JavaScript and are refreshed by the backend when needed.</p>
               </div>
               <div className="security-note">
+                <span className="pill">Direct OAuth</span>
                 <span className="pill">Realtime</span>
                 <span className="pill">Role-aware</span>
                 <span className="pill">CSRF protected</span>

@@ -14,7 +14,7 @@ type PageProps = {
 export default async function ProfilesPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const session = await getSessionOrRedirect();
-  const user = await safeUserFromSession(session);
+  const [user, csrfToken] = await Promise.all([safeUserFromSession(session), readCsrfToken()]);
   if (!user) {
     redirect("/login");
   }
@@ -36,7 +36,6 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   });
 
   const profiles = await fetchProfileList(session, query);
-  const csrfToken = (await readCsrfToken()) ?? "";
 
   const currentFilters = {
     gender: toOptionalValue(resolvedSearchParams.gender),
@@ -54,7 +53,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   return (
     <AppShell
       activeHref="/profiles"
-      csrfToken={csrfToken}
+      csrfToken={csrfToken ?? ""}
       description="Filter, page, and inspect profile intelligence records with the same backend queries that power the CLI."
       title="Profiles"
       user={user}
