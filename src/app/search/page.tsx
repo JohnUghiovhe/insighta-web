@@ -16,7 +16,7 @@ const examples = ["young males from nigeria", "women above 30", "seniors under 7
 export default async function SearchPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const session = await getSessionOrRedirect();
-  const user = await safeUserFromSession(session);
+  const [user, csrfToken] = await Promise.all([safeUserFromSession(session), readCsrfToken()]);
   if (!user) {
     redirect("/login");
   }
@@ -24,7 +24,6 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const queryText = toOptionalValue(resolvedSearchParams.q);
   const page = toSafePage(resolvedSearchParams.page, 1);
   const limit = toSafePage(resolvedSearchParams.limit, 10);
-  const csrfToken = (await readCsrfToken()) ?? "";
 
   const searchResults = queryText
     ? await fetchSearchResults(session, new URLSearchParams({ q: queryText, page: String(page), limit: String(limit) }))
@@ -33,7 +32,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
   return (
     <AppShell
       activeHref="/search"
-      csrfToken={csrfToken}
+      csrfToken={csrfToken ?? ""}
       description="Use natural language to interpret profile filters the same way the CLI does."
       title="Search"
       user={user}

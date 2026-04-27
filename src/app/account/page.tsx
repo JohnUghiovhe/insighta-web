@@ -7,18 +7,17 @@ import { safeUserFromSession } from "@/lib/backend";
 
 export default async function AccountPage() {
   const session = await getSessionOrRedirect();
-  const user = (await safeUserFromSession(session)) ?? (await parseStoredUser());
+  const [fetchedUser, csrfToken] = await Promise.all([safeUserFromSession(session), readCsrfToken()]);
+  const user = fetchedUser ?? (await parseStoredUser());
 
   if (!user) {
     redirect("/login");
   }
 
-  const csrfToken = (await readCsrfToken()) ?? "";
-
   return (
     <AppShell
       activeHref="/account"
-      csrfToken={csrfToken}
+      csrfToken={csrfToken ?? ""}
       description="Review your authenticated session, security posture, and role permissions."
       title="Account"
       user={user}

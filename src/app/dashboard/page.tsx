@@ -9,19 +9,20 @@ import { readCsrfToken } from "@/lib/csrf";
 
 export default async function DashboardPage() {
   const session = await getSessionOrRedirect();
-  const user = await safeUserFromSession(session);
+  const userPromise = safeUserFromSession(session);
+  const csrfTokenPromise = readCsrfToken();
+  const user = await userPromise;
 
   if (!user) {
     redirect("/login");
   }
 
-  const metrics = await fetchDashboardMetrics(session);
-  const csrfToken = (await readCsrfToken()) ?? "";
+  const [metrics, csrfToken] = await Promise.all([fetchDashboardMetrics(session), csrfTokenPromise]);
 
   return (
     <AppShell
       activeHref="/dashboard"
-      csrfToken={csrfToken}
+      csrfToken={csrfToken ?? ""}
       description="A realtime snapshot of the profiles dataset, updated from the same backend APIs used by the CLI."
       title="Dashboard"
       user={user}
