@@ -13,19 +13,18 @@ export default async function LoginPage() {
       <section className="hero-card">
         <div className="hero-grid">
           <div className="hero-copy">
-            <span className="pill">Secure browser OAuth</span>
-            <h1>Insighta brings profile intelligence to a polished, non-technical workspace.</h1>
+            <span className="pill">Insighta Labs+</span>
+            <h1>Bringing profile intelligence to a polished, non-technical workspace.</h1>
             <p>
-              Sign in with GitHub to reach a realtime portal backed by the same APIs used by the CLI, while your session
-              tokens stay in httpOnly cookies and CSRF checks protect every mutating request.
+              A platform with multiple interface; Web, CLI, API options for exploring and sharing profile data. 
             </p>
 
             <div className="hero-actions">
               <Link className="button" href="/api/auth/login">
                 Continue with GitHub
               </Link>
-              <Link className="button button-ghost" href="/dashboard">
-                View sample layout
+              <Link className="button button-ghost" href="https://github.com/JohnUghiovhe/Insighta-CLI">
+                Use the CLI
               </Link>
             </div>
           </div>
