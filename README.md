@@ -130,8 +130,11 @@ Set these variables in Vercel project settings or in your local `.env` file:
 
 ```env
 INSIGHTA_API_BASE_URL=https://intelligence-query-engine-production.up.railway.app
+NEXT_PUBLIC_SITE_URL=https://your-web-app.vercel.app
 NEXT_PUBLIC_CLI_REPO_URL=https://github.com/JohnUghiovhe/Insighta-CLI
 ```
+
+The frontend does not need its own GitHub OAuth app. The backend owns the GitHub OAuth apps and exposes the browser callback flow that this web app consumes.
 
 ### Deployment Notes
 
