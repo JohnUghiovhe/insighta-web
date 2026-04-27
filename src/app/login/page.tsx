@@ -33,7 +33,7 @@ export default async function LoginPage() {
                       />
                     </svg>
                   </span>
-                  Continue with GitHub
+                  Sign in with GitHub
                 </Link>
                 <Link className="button button-ghost" href={CLI_REPO_URL} rel="noreferrer noopener" target="_blank">
                   <span aria-hidden="true" className="button-icon">
@@ -43,13 +43,9 @@ export default async function LoginPage() {
                       <path d="M13.5 15.2H17" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
                     </svg>
                   </span>
-                  Open CLI Repository
+                  Use CLI 
                 </Link>
               </div>
-
-              <a className="scroll-hint" href="#portal-footnote">
-                Scroll for platform notes
-              </a>
             </div>
 
             <div className="hero-panel">
