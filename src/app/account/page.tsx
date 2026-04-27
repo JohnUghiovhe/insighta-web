@@ -6,13 +6,13 @@ import { safeUserFromSession } from "@/lib/backend";
 
 export default async function AccountPage() {
   const session = await getSessionOrRedirect();
-  const user = (await safeUserFromSession(session)) ?? parseStoredUser();
+  const user = (await safeUserFromSession(session)) ?? (await parseStoredUser());
 
   if (!user) {
     return null;
   }
 
-  const csrfToken = readCsrfToken() ?? "";
+  const csrfToken = (await readCsrfToken()) ?? "";
 
   return (
     <AppShell

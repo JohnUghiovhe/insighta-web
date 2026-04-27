@@ -7,24 +7,25 @@ import { getSessionOrRedirect } from "@/lib/session";
 import { readCsrfToken } from "@/lib/csrf";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function ProfileDetailPage({ params }: PageProps) {
+  const resolvedParams = await params;
   const session = await getSessionOrRedirect();
   const user = await safeUserFromSession(session);
   if (!user) {
     return null;
   }
 
-  const profile = await fetchProfileById(session, params.id);
+  const profile = await fetchProfileById(session, resolvedParams.id);
   if (!profile) {
     notFound();
   }
 
-  const csrfToken = readCsrfToken() ?? "";
+  const csrfToken = (await readCsrfToken()) ?? "";
 
   return (
     <AppShell

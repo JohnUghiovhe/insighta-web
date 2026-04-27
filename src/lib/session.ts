@@ -9,8 +9,9 @@ const ACCESS_EXPIRES_COOKIE = "insighta_access_expires_at";
 const REFRESH_EXPIRES_COOKIE = "insighta_refresh_expires_at";
 const USER_COOKIE = "insighta_user";
 
-export const parseStoredUser = (): User | null => {
-  const value = cookies().get(USER_COOKIE)?.value;
+export const parseStoredUser = async (): Promise<User | null> => {
+  const cookieStore = await cookies();
+  const value = cookieStore.get(USER_COOKIE)?.value;
   if (!value) {
     return null;
   }
@@ -22,7 +23,7 @@ export const parseStoredUser = (): User | null => {
 };
 
 export const getSessionOrRedirect = async (): Promise<Session> => {
-  const session = readSessionFromCookies();
+  const session = await readSessionFromCookies();
   if (!session) {
     redirect("/login");
   }
@@ -38,8 +39,8 @@ export const getSessionOrRedirect = async (): Promise<Session> => {
   return session;
 };
 
-export const clearSessionCookies = () => {
-  const cookieStore = cookies();
+export const clearSessionCookies = async () => {
+  const cookieStore = await cookies();
   cookieStore.delete(ACCESS_COOKIE);
   cookieStore.delete(REFRESH_COOKIE);
   cookieStore.delete(ACCESS_EXPIRES_COOKIE);

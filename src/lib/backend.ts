@@ -40,8 +40,8 @@ const parseJsonCookie = (value: string | undefined): User | null => {
   }
 };
 
-export const readSessionFromCookies = (): Session | null => {
-  const cookieStore = cookies();
+export const readSessionFromCookies = async (): Promise<Session | null> => {
+  const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
   const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
   const accessExpiresAt = cookieStore.get(ACCESS_EXPIRES_COOKIE)?.value;

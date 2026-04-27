@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   }
 
   const metrics = await fetchDashboardMetrics(session);
-  const csrfToken = readCsrfToken() ?? "";
+  const csrfToken = (await readCsrfToken()) ?? "";
 
   return (
     <AppShell

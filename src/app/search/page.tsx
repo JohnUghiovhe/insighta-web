@@ -7,22 +7,23 @@ import { getSessionOrRedirect } from "@/lib/session";
 import { readCsrfToken } from "@/lib/csrf";
 
 type PageProps = {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const examples = ["young males from nigeria", "women above 30", "seniors under 70"];
 
 export default async function SearchPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
   const session = await getSessionOrRedirect();
   const user = await safeUserFromSession(session);
   if (!user) {
     return null;
   }
 
-  const queryText = toOptionalValue(searchParams.q);
-  const page = toSafePage(searchParams.page, 1);
-  const limit = toSafePage(searchParams.limit, 10);
-  const csrfToken = readCsrfToken() ?? "";
+  const queryText = toOptionalValue(resolvedSearchParams.q);
+  const page = toSafePage(resolvedSearchParams.page, 1);
+  const limit = toSafePage(resolvedSearchParams.limit, 10);
+  const csrfToken = (await readCsrfToken()) ?? "";
 
   const searchResults = queryText
     ? await fetchSearchResults(session, new URLSearchParams({ q: queryText, page: String(page), limit: String(limit) }))

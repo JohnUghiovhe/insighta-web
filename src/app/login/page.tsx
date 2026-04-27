@@ -2,8 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { readSessionFromCookies } from "@/lib/backend";
 
-export default function LoginPage() {
-  const session = readSessionFromCookies();
+export default async function LoginPage() {
+  const session = await readSessionFromCookies();
   if (session) {
     redirect("/dashboard");
   }

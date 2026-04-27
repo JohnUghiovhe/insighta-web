@@ -7,45 +7,46 @@ import { getSessionOrRedirect } from "@/lib/session";
 import { readCsrfToken } from "@/lib/csrf";
 
 type PageProps = {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function ProfilesPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
   const session = await getSessionOrRedirect();
   const user = await safeUserFromSession(session);
   if (!user) {
     return null;
   }
 
-  const page = toSafePage(searchParams.page, 1);
-  const limit = toSafePage(searchParams.limit, 12);
+  const page = toSafePage(resolvedSearchParams.page, 1);
+  const limit = toSafePage(resolvedSearchParams.limit, 12);
   const query = buildProfileQueryString({
     page,
     limit,
-    gender: toOptionalValue(searchParams.gender) as "male" | "female" | undefined,
-    age_group: toOptionalValue(searchParams.age_group) as "child" | "teenager" | "adult" | "senior" | undefined,
-    country_id: toOptionalValue(searchParams.country_id)?.toUpperCase(),
-    min_age: toOptionalValue(searchParams.min_age) ? Number(toOptionalValue(searchParams.min_age)) : undefined,
-    max_age: toOptionalValue(searchParams.max_age) ? Number(toOptionalValue(searchParams.max_age)) : undefined,
-    min_gender_probability: toOptionalValue(searchParams.min_gender_probability) ? Number(toOptionalValue(searchParams.min_gender_probability)) : undefined,
-    min_country_probability: toOptionalValue(searchParams.min_country_probability) ? Number(toOptionalValue(searchParams.min_country_probability)) : undefined,
-    sort_by: (toOptionalValue(searchParams.sort_by) as "age" | "created_at" | "gender_probability" | undefined) ?? "created_at",
-    order: (toOptionalValue(searchParams.order) as "asc" | "desc" | undefined) ?? "desc"
+    gender: toOptionalValue(resolvedSearchParams.gender) as "male" | "female" | undefined,
+    age_group: toOptionalValue(resolvedSearchParams.age_group) as "child" | "teenager" | "adult" | "senior" | undefined,
+    country_id: toOptionalValue(resolvedSearchParams.country_id)?.toUpperCase(),
+    min_age: toOptionalValue(resolvedSearchParams.min_age) ? Number(toOptionalValue(resolvedSearchParams.min_age)) : undefined,
+    max_age: toOptionalValue(resolvedSearchParams.max_age) ? Number(toOptionalValue(resolvedSearchParams.max_age)) : undefined,
+    min_gender_probability: toOptionalValue(resolvedSearchParams.min_gender_probability) ? Number(toOptionalValue(resolvedSearchParams.min_gender_probability)) : undefined,
+    min_country_probability: toOptionalValue(resolvedSearchParams.min_country_probability) ? Number(toOptionalValue(resolvedSearchParams.min_country_probability)) : undefined,
+    sort_by: (toOptionalValue(resolvedSearchParams.sort_by) as "age" | "created_at" | "gender_probability" | undefined) ?? "created_at",
+    order: (toOptionalValue(resolvedSearchParams.order) as "asc" | "desc" | undefined) ?? "desc"
   });
 
   const profiles = await fetchProfileList(session, query);
-  const csrfToken = readCsrfToken() ?? "";
+  const csrfToken = (await readCsrfToken()) ?? "";
 
   const currentFilters = {
-    gender: toOptionalValue(searchParams.gender),
-    age_group: toOptionalValue(searchParams.age_group),
-    country_id: toOptionalValue(searchParams.country_id),
-    min_age: toOptionalValue(searchParams.min_age),
-    max_age: toOptionalValue(searchParams.max_age),
-    min_gender_probability: toOptionalValue(searchParams.min_gender_probability),
-    min_country_probability: toOptionalValue(searchParams.min_country_probability),
-    sort_by: toOptionalValue(searchParams.sort_by),
-    order: toOptionalValue(searchParams.order),
+    gender: toOptionalValue(resolvedSearchParams.gender),
+    age_group: toOptionalValue(resolvedSearchParams.age_group),
+    country_id: toOptionalValue(resolvedSearchParams.country_id),
+    min_age: toOptionalValue(resolvedSearchParams.min_age),
+    max_age: toOptionalValue(resolvedSearchParams.max_age),
+    min_gender_probability: toOptionalValue(resolvedSearchParams.min_gender_probability),
+    min_country_probability: toOptionalValue(resolvedSearchParams.min_country_probability),
+    sort_by: toOptionalValue(resolvedSearchParams.sort_by),
+    order: toOptionalValue(resolvedSearchParams.order),
     limit: String(limit)
   };
 
