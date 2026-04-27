@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { MetricCard } from "@/components/metric-card";
 import { formatAge, formatDateTime, formatPercent } from "@/lib/format";
@@ -17,7 +18,7 @@ export default async function ProfileDetailPage({ params }: PageProps) {
   const session = await getSessionOrRedirect();
   const user = await safeUserFromSession(session);
   if (!user) {
-    return null;
+    redirect("/login");
   }
 
   const profile = await fetchProfileById(session, resolvedParams.id);

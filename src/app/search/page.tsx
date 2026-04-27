@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { Pagination } from "@/components/pagination";
 import { ProfileCard } from "@/components/profile-card";
@@ -17,7 +18,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const session = await getSessionOrRedirect();
   const user = await safeUserFromSession(session);
   if (!user) {
-    return null;
+    redirect("/login");
   }
 
   const queryText = toOptionalValue(resolvedSearchParams.q);

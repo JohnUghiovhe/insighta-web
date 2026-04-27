@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { MetricCard } from "@/components/metric-card";
 import { ProfileCard } from "@/components/profile-card";
@@ -11,7 +12,7 @@ export default async function DashboardPage() {
   const user = await safeUserFromSession(session);
 
   if (!user) {
-    return null;
+    redirect("/login");
   }
 
   const metrics = await fetchDashboardMetrics(session);

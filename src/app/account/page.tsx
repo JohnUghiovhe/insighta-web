@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { formatDateTime } from "@/lib/format";
 import { getSessionOrRedirect, parseStoredUser } from "@/lib/session";
@@ -9,7 +10,7 @@ export default async function AccountPage() {
   const user = (await safeUserFromSession(session)) ?? (await parseStoredUser());
 
   if (!user) {
-    return null;
+    redirect("/login");
   }
 
   const csrfToken = (await readCsrfToken()) ?? "";
