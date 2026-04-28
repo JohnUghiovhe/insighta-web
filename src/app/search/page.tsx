@@ -25,9 +25,19 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const page = toSafePage(resolvedSearchParams.page, 1);
   const limit = toSafePage(resolvedSearchParams.limit, 10);
 
-  const searchResults = queryText
-    ? await fetchSearchResults(session, new URLSearchParams({ q: queryText, page: String(page), limit: String(limit) }))
-    : null;
+  let searchResults = null;
+  let searchError: string | null = null;
+
+  if (queryText) {
+    try {
+      searchResults = await fetchSearchResults(session, new URLSearchParams({ q: queryText, page: String(page), limit: String(limit) }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      searchError = message.includes("(400)")
+        ? "The query could not be interpreted. Try a simpler phrase or use a known country name from the dataset."
+        : "Search failed. Please try again.";
+    }
+  }
 
   return (
     <AppShell
@@ -88,6 +98,11 @@ export default async function SearchPage({ searchParams }: PageProps) {
           )}
 
           <Pagination currentPage={searchResults.page} pathname="/search" searchParams={{ q: queryText, limit: String(limit) }} totalPages={searchResults.total_pages} />
+        </section>
+      ) : queryText && searchError ? (
+        <section className="panel-section empty-state">
+          <strong>Search query not understood</strong>
+          <p>{searchError}</p>
         </section>
       ) : (
         <section className="panel-section empty-state">
