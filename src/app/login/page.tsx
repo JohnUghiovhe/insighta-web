@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 const CLI_REPO_URL = process.env.NEXT_PUBLIC_CLI_REPO_URL ?? "https://github.com/JohnUghiovhe/Insighta-CLI";
 const githubLoginUrl = "/api/auth/login";
@@ -12,10 +11,9 @@ export default async function LoginPage() {
           <div className="hero-grid hero-grid-login">
             <div className="hero-copy">
               <span className="pill">Insighta Labs+</span>
-              <h1>Authenticate with GitHub, then open your Insighta workspace.</h1>
+              <h1>Multi-Interface profile intelligence that actually works for you.</h1>
               <p>
-                This portal sends you straight to GitHub for consent, then returns you here with secure httpOnly
-                cookies. The dashboard, profiles, search, and account pages all use the same backend as the CLI.
+                Query, filter, and explore profiles with speed and precision across web, CLI, or API. One system, built to turn data into clear, usable insight.
               </p>
 
               <div className="hero-actions">

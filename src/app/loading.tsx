@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <main className="login-page" aria-busy="true" aria-live="polite">
+    <main className="compact-loading" aria-busy="true" aria-live="polite">
       <section className="hero hero-left">
         <div className="hero-card hero-card-wide">
           <div className="hero-grid hero-grid-login">

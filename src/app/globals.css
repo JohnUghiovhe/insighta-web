@@ -310,7 +310,7 @@ nextjs-portal {
 .hero-card {
   width: min(1080px, 100%);
   border-radius: 34px;
-  padding: 28px;
+  padding: 20px;
   border: 1px solid var(--line);
   background: linear-gradient(145deg, rgba(8, 19, 33, 0.92), rgba(7, 15, 27, 0.78));
   box-shadow: var(--shadow);
@@ -343,20 +343,52 @@ nextjs-portal {
 }
 
 .hero-grid-login {
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
   align-items: start;
-  column-gap: 28px;
+  column-gap: 20px;
 }
 
 .hero-copy .pill {
   margin-bottom: 14px;
 }
 
+.hero-copy {
+  text-align: left;
+  max-width: 680px;
+}
+
 .hero-copy .hero-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 22px;
+  margin-top: 12px;
+}
+
+/* Make Loading state less intrusive during route transitions */
+.compact-loading {
+  min-height: auto;
+  display: grid;
+  align-content: start;
+  padding: 14px 18px;
+}
+
+.compact-loading .hero {
+  min-height: auto;
+  padding: 12px 0 0;
+}
+
+.compact-loading .hero-card {
+  width: min(980px, 100%);
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.compact-loading .hero-copy h1 {
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+}
+
+.compact-loading .hero-actions .button {
+  padding: 8px 12px;
 }
 
 .button-icon {
