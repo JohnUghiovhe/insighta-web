@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { fetchMe, readSessionFromCookies } from "@/lib/backend";
 
 const CLI_REPO_URL = process.env.NEXT_PUBLIC_CLI_REPO_URL ?? "https://github.com/JohnUghiovhe/Insighta-CLI";
 const githubLoginUrl = "/api/auth/login";
 
 export default async function LoginPage() {
-  const session = await readSessionFromCookies();
-  if (session && (await fetchMe(session))) {
-    redirect("/dashboard");
-  }
-
   return (
     <main className="login-page">
       <section className="hero hero-left">
