@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { getApiBaseUrl, getBrowserCallbackUrl } from "@/lib/backend";
+import { getApiBaseUrl } from "@/lib/backend";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const callbackUrl = getBrowserCallbackUrl();
+export async function GET(request: NextRequest) {
+  const callbackUrl = new URL("/api/auth/callback", request.nextUrl.origin).toString();
   const apiBase = getApiBaseUrl();
   const loginUrl = new URL(`${apiBase}/auth/github`);
   loginUrl.searchParams.set("callback_url", callbackUrl);
