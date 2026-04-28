@@ -129,23 +129,34 @@ export const fetchProfileById = async (session: Session, id: string): Promise<Pr
 export const fetchDashboardMetrics = async (session: Session) => {
   const makeCountQuery = (overrides: Record<string, string>) => new URLSearchParams({ page: "1", limit: "1", ...overrides });
 
-  const [allProfiles, maleProfiles, femaleProfiles, adults, seniors, recent] = await Promise.all([
-    fetchProfileList(session, makeCountQuery({ sort_by: "created_at", order: "desc" })),
-    fetchProfileList(session, makeCountQuery({ gender: "male", sort_by: "created_at", order: "desc" })),
-    fetchProfileList(session, makeCountQuery({ gender: "female", sort_by: "created_at", order: "desc" })),
-    fetchProfileList(session, makeCountQuery({ age_group: "adult", sort_by: "created_at", order: "desc" })),
-    fetchProfileList(session, makeCountQuery({ age_group: "senior", sort_by: "created_at", order: "desc" })),
-    fetchProfileList(session, new URLSearchParams({ page: "1", limit: "6", sort_by: "created_at", order: "desc" }))
-  ]);
+  try {
+    const [allProfiles, maleProfiles, femaleProfiles, adults, seniors, recent] = await Promise.allSettled([
+      fetchProfileList(session, makeCountQuery({ sort_by: "created_at", order: "desc" })),
+      fetchProfileList(session, makeCountQuery({ gender: "male", sort_by: "created_at", order: "desc" })),
+      fetchProfileList(session, makeCountQuery({ gender: "female", sort_by: "created_at", order: "desc" })),
+      fetchProfileList(session, makeCountQuery({ age_group: "adult", sort_by: "created_at", order: "desc" })),
+      fetchProfileList(session, makeCountQuery({ age_group: "senior", sort_by: "created_at", order: "desc" })),
+      fetchProfileList(session, new URLSearchParams({ page: "1", limit: "6", sort_by: "created_at", order: "desc" }))
+    ]);
 
-  return {
-    totalProfiles: allProfiles.total,
-    maleProfiles: maleProfiles.total,
-    femaleProfiles: femaleProfiles.total,
-    adultProfiles: adults.total,
-    seniorProfiles: seniors.total,
-    recentProfiles: recent.data
-  };
+    return {
+      totalProfiles: allProfiles.status === "fulfilled" ? allProfiles.value.total : 0,
+      maleProfiles: maleProfiles.status === "fulfilled" ? maleProfiles.value.total : 0,
+      femaleProfiles: femaleProfiles.status === "fulfilled" ? femaleProfiles.value.total : 0,
+      adultProfiles: adults.status === "fulfilled" ? adults.value.total : 0,
+      seniorProfiles: seniors.status === "fulfilled" ? seniors.value.total : 0,
+      recentProfiles: recent.status === "fulfilled" ? recent.value.data : []
+    };
+  } catch {
+    return {
+      totalProfiles: 0,
+      maleProfiles: 0,
+      femaleProfiles: 0,
+      adultProfiles: 0,
+      seniorProfiles: 0,
+      recentProfiles: []
+    };
+  }
 };
 
 export const buildProfileQueryString = (query: PageQuery): URLSearchParams => {

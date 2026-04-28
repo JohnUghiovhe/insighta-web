@@ -12,30 +12,37 @@ type PageProps = {
 };
 
 export default async function ProfilesPage({ searchParams }: PageProps) {
-  const resolvedSearchParams = await searchParams;
-  const session = await getSessionOrRedirect();
-  const [user, csrfToken] = await Promise.all([safeUserFromSession(session), readCsrfToken()]);
-  if (!user) {
-    redirect("/login");
-  }
+  try {
+    const resolvedSearchParams = await searchParams;
+    const session = await getSessionOrRedirect();
+    const [user, csrfToken] = await Promise.all([safeUserFromSession(session), readCsrfToken()]);
+    if (!user) {
+      redirect("/login");
+    }
 
-  const page = toSafePage(resolvedSearchParams.page, 1);
-  const limit = toSafePage(resolvedSearchParams.limit, 12);
-  const query = buildProfileQueryString({
-    page,
-    limit,
-    gender: toOptionalValue(resolvedSearchParams.gender) as "male" | "female" | undefined,
-    age_group: toOptionalValue(resolvedSearchParams.age_group) as "child" | "teenager" | "adult" | "senior" | undefined,
-    country_id: toOptionalValue(resolvedSearchParams.country_id)?.toUpperCase(),
-    min_age: toOptionalValue(resolvedSearchParams.min_age) ? Number(toOptionalValue(resolvedSearchParams.min_age)) : undefined,
-    max_age: toOptionalValue(resolvedSearchParams.max_age) ? Number(toOptionalValue(resolvedSearchParams.max_age)) : undefined,
-    min_gender_probability: toOptionalValue(resolvedSearchParams.min_gender_probability) ? Number(toOptionalValue(resolvedSearchParams.min_gender_probability)) : undefined,
-    min_country_probability: toOptionalValue(resolvedSearchParams.min_country_probability) ? Number(toOptionalValue(resolvedSearchParams.min_country_probability)) : undefined,
-    sort_by: (toOptionalValue(resolvedSearchParams.sort_by) as "age" | "created_at" | "gender_probability" | undefined) ?? "created_at",
-    order: (toOptionalValue(resolvedSearchParams.order) as "asc" | "desc" | undefined) ?? "desc"
-  });
+    const page = toSafePage(resolvedSearchParams.page, 1);
+    const limit = toSafePage(resolvedSearchParams.limit, 12);
+    const query = buildProfileQueryString({
+      page,
+      limit,
+      gender: toOptionalValue(resolvedSearchParams.gender) as "male" | "female" | undefined,
+      age_group: toOptionalValue(resolvedSearchParams.age_group) as "child" | "teenager" | "adult" | "senior" | undefined,
+      country_id: toOptionalValue(resolvedSearchParams.country_id)?.toUpperCase(),
+      min_age: toOptionalValue(resolvedSearchParams.min_age) ? Number(toOptionalValue(resolvedSearchParams.min_age)) : undefined,
+      max_age: toOptionalValue(resolvedSearchParams.max_age) ? Number(toOptionalValue(resolvedSearchParams.max_age)) : undefined,
+      min_gender_probability: toOptionalValue(resolvedSearchParams.min_gender_probability) ? Number(toOptionalValue(resolvedSearchParams.min_gender_probability)) : undefined,
+      min_country_probability: toOptionalValue(resolvedSearchParams.min_country_probability) ? Number(toOptionalValue(resolvedSearchParams.min_country_probability)) : undefined,
+      sort_by: (toOptionalValue(resolvedSearchParams.sort_by) as "age" | "created_at" | "gender_probability" | undefined) ?? "created_at",
+      order: (toOptionalValue(resolvedSearchParams.order) as "asc" | "desc" | undefined) ?? "desc"
+    });
 
-  const profiles = await fetchProfileList(session, query);
+    let profiles;
+    try {
+      profiles = await fetchProfileList(session, query);
+    } catch (error) {
+      console.error("Failed to fetch profiles:", error);
+      profiles = { data: [], total: 0, page: 1, limit, total_pages: 0 };
+    }
 
   const currentFilters = {
     gender: toOptionalValue(resolvedSearchParams.gender),
@@ -148,5 +155,9 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         <Pagination currentPage={profiles.page} pathname="/profiles" searchParams={currentFilters} totalPages={profiles.total_pages} />
       </section>
     </AppShell>
-  );
+    );
+  } catch (error) {
+    console.error("Profiles error:", error);
+    redirect("/login");
+  }
 }
