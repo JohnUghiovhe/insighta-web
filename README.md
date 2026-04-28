@@ -139,7 +139,7 @@ The frontend does not need its own GitHub OAuth app. The backend owns the GitHub
 ### Deployment Notes
 
 - The app uses server-side fetches, so the backend base URL must be reachable from the deployed Vercel environment.
-- The login flow sends users to the backend OAuth start endpoint, so the backend browser redirect URI must match the deployed web callback path.
+- The login flow sends users to the backend OAuth start endpoint, so the browser OAuth app on GitHub must allow `https://your-web-app.vercel.app/api/auth/callback` as the redirect URI.
 - Production sessions depend on secure cookie behavior, so the app should be deployed over HTTPS.
 
 ## Development
