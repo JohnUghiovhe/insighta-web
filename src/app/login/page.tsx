@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getApiBaseUrl, readSessionFromCookies } from "@/lib/backend";
+import { fetchMe, readSessionFromCookies } from "@/lib/backend";
 
 const CLI_REPO_URL = process.env.NEXT_PUBLIC_CLI_REPO_URL ?? "https://github.com/JohnUghiovhe/Insighta-CLI";
-const githubLoginUrl = `${getApiBaseUrl()}/auth/github`;
+const githubLoginUrl = "/api/auth/login";
 
 export default async function LoginPage() {
   const session = await readSessionFromCookies();
-  if (session) {
+  if (session && (await fetchMe(session))) {
     redirect("/dashboard");
   }
 
@@ -25,7 +25,7 @@ export default async function LoginPage() {
               </p>
 
               <div className="hero-actions">
-                <Link className="button" href={githubLoginUrl}>
+                <a className="button" href={githubLoginUrl}>
                   <span aria-hidden="true" className="button-icon">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -35,7 +35,7 @@ export default async function LoginPage() {
                     </svg>
                   </span>
                   Continue with GitHub
-                </Link>
+                </a>
                 <Link className="button button-ghost" href={CLI_REPO_URL} rel="noreferrer noopener" target="_blank">
                   <span aria-hidden="true" className="button-icon">
                     <svg viewBox="0 0 24 24">

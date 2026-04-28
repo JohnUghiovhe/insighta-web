@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { AuthCallbackResponse } from "@/lib/types";
-import { getApiBaseUrl, getBrowserCallbackUrl } from "@/lib/backend";
+import { getApiBaseUrl } from "@/lib/backend";
 
 const cookieOptions = () => ({
   httpOnly: true,
