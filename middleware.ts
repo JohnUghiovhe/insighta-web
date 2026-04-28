@@ -63,35 +63,45 @@ async function refreshSession(request: NextRequest, response: NextResponse): Pro
     return false;
   }
 
-  const refreshResponse = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ refresh_token: refreshToken }),
-    cache: "no-store"
-  });
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-  if (!refreshResponse.ok) {
+    const refreshResponse = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      cache: "no-store",
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!refreshResponse.ok) {
+      return false;
+    }
+
+    const data = (await refreshResponse.json()) as {
+      access_token: string;
+      refresh_token: string;
+      access_token_expires_in_seconds: number;
+      refresh_token_expires_in_seconds: number;
+    };
+
+    const accessExpiresAt = new Date(Date.now() + data.access_token_expires_in_seconds * 1000).toISOString();
+    const refreshExpiresAtNext = new Date(Date.now() + data.refresh_token_expires_in_seconds * 1000).toISOString();
+    setSessionCookies(response, {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      accessExpiresAt,
+      refreshExpiresAt: refreshExpiresAtNext
+    });
+    return true;
+  } catch {
     return false;
   }
-
-  const data = (await refreshResponse.json()) as {
-    access_token: string;
-    refresh_token: string;
-    access_token_expires_in_seconds: number;
-    refresh_token_expires_in_seconds: number;
-  };
-
-  const accessExpiresAt = new Date(Date.now() + data.access_token_expires_in_seconds * 1000).toISOString();
-  const refreshExpiresAtNext = new Date(Date.now() + data.refresh_token_expires_in_seconds * 1000).toISOString();
-  setSessionCookies(response, {
-    accessToken: data.access_token,
-    refreshToken: data.refresh_token,
-    accessExpiresAt,
-    refreshExpiresAt: refreshExpiresAtNext
-  });
-  return true;
 }
 
 export async function middleware(request: NextRequest) {
