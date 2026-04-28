@@ -156,6 +156,13 @@ npm run build
 npm run start
 ```
 
+## Branch And PR Policy
+
+- Create feature branches from `main` using prefixes like `feat/`, `fix/`, `docs/`, or `chore/`.
+- Open pull requests into `main` and keep each PR scoped to one change area.
+- Require passing CI checks (`lint`, `test`, `build`) before merge.
+- Prefer squash merge with a conventional commit-style title for a clean history.
+
 ## Repository Notes
 
 - This repo is the browser sibling to the CLI and backend projects.
