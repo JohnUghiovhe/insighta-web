@@ -9,14 +9,14 @@ Use these links to move across the full Insighta repository set.
 | Project | Purpose | Docs |
 | --- | --- | --- |
 | Insighta Labs Web (this repo) | Browser portal for login, dashboard, profiles, search, and account management | This README |
-| Insighta+ Labs Backend | Auth, profile APIs, rate limiting, logging, RBAC, and parser logic | [Backend README](https://github.com/JohnUghiovhe/insighta-backend#readme) |
+| Insighta Labs Backend | Auth, profile APIs, rate limiting, logging, RBAC, and parser logic | [Backend README](https://github.com/JohnUghiovhe/insighta-backend#readme) |
 | Insighta CLI | Terminal client for login, profile workflows, and exports | [CLI README](https://github.com/JohnUghiovhe/Insighta-CLI#readme) |
 
 ## Live URLs
 
 | Surface | URL | Status |
 | --- | --- | --- |
-| Web Portal | Pending Vercel deployment URL | To be updated |
+| Web Portal | https://insighta-web-pied.vercel.app/ | Live |
 | Backend Base | https://intelligence-query-engine-production.up.railway.app/ | Live |
 | Backend Health | https://intelligence-query-engine-production.up.railway.app/health | Live |
 
@@ -162,3 +162,4 @@ npm run start
 - The UI is intentionally left-aligned and multi-sectioned instead of a single centered hero.
 - The theme uses a dark base with electric violet and orange accents.
 - The portal is built to be readable for non-technical users while still exposing power-user paths through the CLI link.
+- The browser flow uses the same backend and data model as the CLI, so auth state and profile results stay aligned across interfaces.
