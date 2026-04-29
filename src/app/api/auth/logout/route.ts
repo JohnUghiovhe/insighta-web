@@ -22,26 +22,7 @@ const getFormValue = async (request: NextRequest, key: string): Promise<string |
   return typeof value === "string" ? value : null;
 };
 
-export async function POST(request: NextRequest) {
-  const csrfToken = await getFormValue(request, "csrf_token");
-  const cookieCsrf = request.cookies.get("insighta_csrf")?.value;
-  const refreshToken = request.cookies.get("insighta_refresh_token")?.value;
-
-  if (!csrfToken || !cookieCsrf || csrfToken !== cookieCsrf) {
-    return NextResponse.redirect(new URL("/account?error=csrf", request.url));
-  }
-
-  if (refreshToken) {
-    await fetch(`${getApiBaseUrl()}/auth/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-      cache: "no-store"
-    }).catch(() => null);
-  }
-
+export async function GET(request: NextRequest) {
   const response = NextResponse.redirect(new URL("/login", request.url));
   for (const cookieName of [
     "insighta_access_token",
@@ -53,8 +34,68 @@ export async function POST(request: NextRequest) {
   ]) {
     response.cookies.set(cookieName, "", { ...cookieOptions(), maxAge: 0 });
   }
-
   return response;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const csrfToken = await getFormValue(request, "csrf_token");
+    const cookieCsrf = request.cookies.get("insighta_csrf")?.value;
+    const refreshToken = request.cookies.get("insighta_refresh_token")?.value;
+
+    if (!csrfToken || !cookieCsrf || csrfToken !== cookieCsrf) {
+      const response = NextResponse.redirect(new URL("/login", request.url));
+      for (const cookieName of [
+        "insighta_access_token",
+        "insighta_refresh_token",
+        "insighta_access_expires_at",
+        "insighta_refresh_expires_at",
+        "insighta_user",
+        "insighta_csrf"
+      ]) {
+        response.cookies.set(cookieName, "", { ...cookieOptions(), maxAge: 0 });
+      }
+      return response;
+    }
+
+    if (refreshToken) {
+      await fetch(`${getApiBaseUrl()}/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+        cache: "no-store"
+      }).catch(() => null);
+    }
+
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    for (const cookieName of [
+      "insighta_access_token",
+      "insighta_refresh_token",
+      "insighta_access_expires_at",
+      "insighta_refresh_expires_at",
+      "insighta_user",
+      "insighta_csrf"
+    ]) {
+      response.cookies.set(cookieName, "", { ...cookieOptions(), maxAge: 0 });
+    }
+
+    return response;
+  } catch {
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    for (const cookieName of [
+      "insighta_access_token",
+      "insighta_refresh_token",
+      "insighta_access_expires_at",
+      "insighta_refresh_expires_at",
+      "insighta_user",
+      "insighta_csrf"
+    ]) {
+      response.cookies.set(cookieName, "", { ...cookieOptions(), maxAge: 0 });
+    }
+    return response;
+  }
 }
 
 export const dynamic = "force-dynamic";
