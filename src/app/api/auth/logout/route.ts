@@ -98,4 +98,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function OPTIONS(request: NextRequest) {
+  const response = NextResponse.json(null, { status: 204 });
+  response.headers.set("Allow", "GET, POST, OPTIONS");
+  return response;
+}
+
 export const dynamic = "force-dynamic";
