@@ -4,9 +4,9 @@
   "private": true,
   "description": "Insighta Labs web portal",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "lint": "tsc --noEmit",
     "test": "vitest run"
   },
